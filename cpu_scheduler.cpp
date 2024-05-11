@@ -8,6 +8,14 @@
 
 using namespace std;
 
+// PCB
+struct process
+{
+
+	int at, bt, pr, pno, wt;
+};
+
+process proc[5];
 /*
 	This struct identifies the process
 	 PID: Process ID,
@@ -24,7 +32,6 @@ struct Process // process control block
 	int PID;
 	int AT;
 	int CPUB;
-	int Size;
 	int WT;
 	int TA;
 	int ST;
@@ -69,19 +76,18 @@ int main()
 			PCB: Process Control Block that includes all processes
 		*/
 
-		int mSize, pSize, Q, CS;
+		int  Q, CS;
 		while (fin)
 		{
 
-			fin >> mSize >> pSize >> Q >> CS;
+			fin >> Q >> CS;
 			for (int i = 0; i < 5; i++)
 			{
 				fin >> PCB[i].PID;
 				fin >> PCB[i].AT;
 				fin >> PCB[i].CPUB;
-				fin >> PCB[i].Size;
                 // Initially for debugging testing
-                cout << "Process " << i + 1 << ": PID=" << PCB[i].PID << ", AT=" << PCB[i].AT << ", CPUB=" << PCB[i].CPUB << ", Size=" << PCB[i].Size << endl;
+                cout << "Process " << i + 1 << ": PID=" << PCB[i].PID << ", AT=" << PCB[i].AT << ", CPUB=" << PCB[i].CPUB  << endl;
 
 			}
 		}

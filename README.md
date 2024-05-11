@@ -39,31 +39,24 @@ Note: Make sure your `launch.json` file is properly configured to specify the pa
 
 The input file for the project will contain the following information:
 
-- **Physical memory size (msize):** The total physical memory size, represented in bytes. It should be a power of 2. Example: 4096 bytes.
+- **Round Robin Quantum (Q):** The time quantum used for the Round Robin scheduling algorithm. Sample example: 10.
 
-- **Page size (psize):** The size of each page or frame, also represented in bytes. It should be a power of 2. Example: 512 bytes.
-
-- **Round Robin Quantum (Q):** The time quantum used for the Round Robin scheduling algorithm. Example: 10.
-
-- **Context Switch (CS):** The time taken for a context switch, in milliseconds. Example: 1.
+- **Context Switch (CS):** The time taken for a context switch, in milliseconds. Sample example: 2.
 
 - **Process Information:** Each process in the input file is represented by the following information:
-  - Process ID (PID)
-  - Arrival Time (AT)
-  - CPU Burst (CPUB)
-  - Size in Bytes
+  - Process ID (PID). Sample example: 0, 1, 2, 3, 4.
+  - Arrival Time (AT). Sample example: 0, 10, 25, 30, 55.
+  - CPU Burst (CPUB).Sample example: 10, 15, 5, 25, 15.
 
 **Sample file format processes.txt:**
 ```
-32768
-512
   10
   2
-0 0 10 2048
-1 10 15 2048
-2 25  5 2048
-3 30 25 2048
-4 55 15 2028
+0 0 10 
+1 10 15 
+2 25  5 
+3 30 25 
+4 55 15 
  ```
 
 In this sample, the first four lines represent the system parameters (msize, psize, Q, CS), and each subsequent line represents a process with its corresponding PID, AT, CPUB, and Size.
