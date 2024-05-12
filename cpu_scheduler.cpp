@@ -39,6 +39,40 @@ struct Process // process control block
 	int priority;
 };
 
+// Using FCFS Algorithm to find Waiting time
+void get_wt_time(int wt[], int processNum)
+{
+	// declaring service array that stores cumulative burst time
+	int service[10];
+
+	// Initilising initial elements of the arrays
+	service[0] = proc[0].at;
+	wt[0] = 0;
+
+	for (int i = 1; i < processNum; i++)
+	{
+		service[i] = proc[i - 1].bt + service[i - 1];
+
+		wt[i] = service[i] - proc[i].at;
+
+		// If waiting time is negative, change it into zero
+
+		if (wt[i] < 0)
+		{
+			wt[i] = 0;
+		}
+	}
+}
+
+void get_tat_time(int tat[], int wt[], int processNum)
+{
+	// Filling turnaroundtime array
+
+	for (int i = 0; i < processNum; i++)
+	{
+		tat[i] = proc[i].bt + wt[i];
+	}
+}
 
 int main()
 {
