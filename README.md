@@ -59,4 +59,4 @@ The input file for the project will contain the following information:
 4 55 15 
  ```
 
-In this sample, the first four lines represent the system parameters (msize, psize, Q, CS), and each subsequent line represents a process with its corresponding PID, AT, CPUB, and Size.
+In this sample, the first two lines represent the system parameters (Q, CS), and each subsequent line represents a process with its corresponding PID, AT and CPUB.
