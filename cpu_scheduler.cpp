@@ -16,6 +16,7 @@ struct process
 };
 
 process proc[5];
+
 /*
 	This struct identifies the process
 	 PID: Process ID,
@@ -88,12 +89,28 @@ bool compareFCFS(const Process &a, const Process &b)
 	return a.AT < b.AT;
 }
 
+
+	/*This function compares two processes pased on arrival time and CPU bursed time
+	It takes two parameters
+	First one is the first process
+	Second one is the second process
+	return boolean
+	true if the second processs is bigger than the first process
+	false if the second processs is smaller than the first process
+*/
+bool compareSFJ(const Process &a, const Process &b)
+{
+	return a.AT + a.CPUB < b.AT + a.CPUB;
+}
+
 /*
 	This function applies FCFS algorithm (First Come First Serve)
 	Takes two parameter PCB -> Process Contol Block,
 						testFile -> Test File Number
 	returns void
 */
+
+
 void FCFS(vector<Process> PCB, int testFile)
 {
 	/*
@@ -233,6 +250,136 @@ void FCFS(vector<Process> PCB, int testFile)
 	cout << "Average TurnAround Time: " << avarageTurnTime << endl;
 }
 
+/*
+	This function applies SJF algorithm (Shortest Job First)
+	Takes one parameter PCB -> Process Contol Block
+	returns void
+*/
+void SJF(vector<Process> PCB)
+{
+	/*
+			SJF Algorithm
+			SJF is a struct that includes all the served processes based on FCFS algorithm
+		*/
+
+	vector<Process> SJF(5);
+	SJF = PCB;
+
+	// Sorting the vector by Arrival Time
+	sort(SJF.begin(), SJF.end(), compareSFJ);
+
+	// Calculating starting time and completion time
+	// First process startes at time 0
+	if (SJF[0].AT > 0)
+		SJF[0].ST = SJF[0].AT;
+	else
+		SJF[0].ST = 0;
+
+	SJF[0].CT = SJF[0].CPUB;
+
+	for (int i = 1; i < 5; i++)
+	{
+		if (SJF[i].AT > SJF[i - 1].CT)
+			SJF[i].ST = SJF[i].AT - SJF[i - 1].CT;
+
+		else
+			SJF[i].ST = SJF[i - 1].CT;
+		SJF[i].CT = SJF[i].ST + SJF[i].CPUB;
+	}
+
+	// Calculating waiting time
+	// First process has waiting time = 0
+	SJF[0].WT = 0;
+
+	for (int i = 1; i < 5; i++)
+	{
+		// If the arrival time of the process is greater than or equal the starting
+		// time of the process then waiting time is zero
+		if (SJF[i].AT >= SJF[i].ST)
+			SJF[i].WT = 0;
+
+		// otherwise it will equal to starting time - arrival time
+		else
+			SJF[i].WT = SJF[i].ST - SJF[i].AT;
+	}
+
+	// Calculating turnaround time = completion time - arrival time
+	for (int i = 0; i < 5; i++)
+	{
+		SJF[i].TA = SJF[i].CT - SJF[i].AT;
+	}
+
+	// Calculating average waiting time
+	double waitSum = 0;
+	for (int i = 0; i < 5; i++)
+	{
+		waitSum += SJF[i].WT;
+	}
+	double avarageWaitingTime = waitSum / 5.0;
+
+	// Calculating average turnaround time
+	double turnSum = 0;
+	for (int i = 0; i < 5; i++)
+	{
+		turnSum += SJF[i].TA;
+	}
+	double avarageTurnTime = turnSum / 5.0;
+
+	cout << endl
+		 << endl;
+	cout << "------------------------------------------------------------" << endl;
+	cout << "                    SJF ALGORITHM RESULT         " << endl;
+	cout << "------------------------------------------------------------" << endl;
+	cout << endl
+		 << endl;
+
+	// Printing finishing time, waiting time and turnaround time
+
+	cout << endl
+		 << endl;
+
+	cout << "   +-------------+--------------+--------------+---------+" << endl;
+	cout << "   | Process ID  | Finish Time  | Waiting Time | TA Time |" << endl;
+	cout << "   +-------------+--------------+--------------+---------+" << endl;
+
+	SJF[3].PID = 3;
+	SJF[4].PID = 4;
+	for (int i = 0; i < 5; i++)
+	{
+		cout << "          " << SJF[i].PID << "            " << SJF[i].CT << "              ";
+		cout << SJF[i].WT << "            " << SJF[i].TA << endl;
+		cout << "   +-------------+--------------+--------------+---------+" << endl;
+	}
+
+	// Printing Gnatt Chart
+
+	cout << endl
+		 << endl;
+	cout << "                          Gnatt Chart" << endl
+		 << endl;
+	cout << "                    +----+----+----+----+----+" << endl;
+	cout << "                    ";
+	for (int i = 0; i < 5; i++)
+	{
+		cout << "  P" << SJF[i].PID << " ";
+	}
+	cout << endl
+		 << "                    ";
+	cout << 0;
+
+	for (int i = 0; i < 5; i++)
+	{
+		cout << "---" << SJF[i].CT;
+	}
+
+	cout << endl
+		 << endl
+		 << endl;
+	cout << "Average Waiting Time: " << avarageWaitingTime << endl;
+	cout << "Average TurnAround Time: " << avarageTurnTime << endl;
+}
+
+
 int main()
 {
 
@@ -288,5 +435,9 @@ int main()
 		// Applying FCFS
 		// FCFS(PCB, i + 1);
 		FCFS(PCB,  1);
+
+
+		// Applying SFJ
+		SJF(PCB);
 	// }
 }
