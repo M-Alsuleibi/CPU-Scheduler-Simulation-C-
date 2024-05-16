@@ -22,7 +22,6 @@ process proc[5];
 	 PID: Process ID,
 	 AT: Arrival Time,
 	 CPUB: CPU Burst,
-	 size: Size in Bytes,
 	 ST: Starting Time,
 	 CT: Completion Time,
 	 WT: Waiting Time,
@@ -379,19 +378,132 @@ void SJF(vector<Process> PCB)
 	cout << "Average TurnAround Time: " << avarageTurnTime << endl;
 }
 
+/*
+	This function applies RR algorithm (Round Robin)
+	Takes one parameter PCB -> Process Contol Block,
+						CS -> Context Switch
+						Q -> Time Quantum
+	returns void
+*/
+void RoundRobin(vector<Process> PCB, int CS, int Q)
+{
+	vector<Process> RR;
+	RR = PCB;
+	int i, time, numOfProcess, remain, temps = 0;
+	double totalWaitTime = 0, totalTurnTime = 0, totalBurstTime = 0;
+	int idle = 0;
+
+	numOfProcess = 5;
+	remain = 5;
+	vector<int> burstRemain(numOfProcess);
+
+	// Initializing burst time remainder
+	for (int j = 0; j < numOfProcess; j++)
+	{
+		burstRemain[j] = RR[j].CPUB;
+		RR[j].TA = 0;
+		RR[j].WT = 0;
+		totalBurstTime += RR[j].CPUB;
+	}
+
+	for (time = 0, i = 0; remain != 0;)
+	{
+		if ((burstRemain[i] <= Q) && (burstRemain[i] > 0))
+		{
+			time += burstRemain[i];
+			burstRemain[i] = 0;
+			temps = 1;
+
+			if (i < 4)
+			{
+				RR[i + 1].WT += CS;
+				idle += CS;
+			}
+		}
+
+		else if (burstRemain[i] > 0)
+		{
+			// Subtracting Qunatum from the burst time
+			burstRemain[i] -= Q;
+			time += Q;
+			RR[i].WT += CS;
+			idle += CS;
+			if (i < 4)
+			{
+				RR[i + 1].WT += CS;
+			}
+		}
+
+		if (burstRemain[i] == 0 && temps == 1)
+		{
+			remain--;
+			RR[i].WT += time - RR[i].AT - RR[i].CPUB;
+			RR[i].TA += time - RR[i].AT;
+			RR[i].CT = time;
+			totalWaitTime += RR[i].WT;
+			totalTurnTime += RR[i].TA;
+			temps = 0;
+		}
+
+		if (i == (numOfProcess - 1))
+			i = 0;
+		else if (RR[i + 1].AT <= time)
+			i++;
+		else
+			i = 0;
+	}
+	cout << endl
+		 << endl;
+	cout << "------------------------------------------------------------" << endl;
+	cout << "                    RR ALGORITHM RESULT         " << endl;
+	cout << "--------------+---------------+--------------+--------------" << endl;
+	cout << "                   Round Robin QUANTUM: " << Q << endl;
+	cout << "------------------------------------------------------------" << endl;
+	cout << endl
+		 << endl;
+
+	// Printing finishing time, waiting time and turnaround time
+
+	cout << endl
+		 << endl;
+
+	cout << "   +-------------+--------------+--------------+---------+" << endl;
+	cout << "   | Process ID  | Finish Time  | Waiting Time | TA Time |" << endl;
+	cout << "   +-------------+--------------+--------------+---------+" << endl;
+
+	for (int i = 0; i < 5; i++)
+	{
+		cout << "          " << RR[i].PID << "            " << RR[i].CT << "              ";
+		cout << RR[i].WT << "            " << RR[i].TA << endl;
+		cout << "   +-------------+--------------+--------------+---------+" << endl;
+	}
+
+	cout << "                          Gnatt Chart" << endl
+		 << endl;
+	cout << "                    +----+----+----+----+----+" << endl;
+	cout << "                    ";
+
+	for (int i = 0; i < 5; i++)
+	{
+
+		cout << "  P" << PCB[i].PID << " ";
+	}
+	cout << endl
+		 << "                    ";
+
+	cout << endl
+		 << endl
+		 << endl;
+	cout << "Average Waiting time: " << totalWaitTime * 1.0 / numOfProcess << endl;
+	cout << "Average Turnaround time: " << totalTurnTime * 1.0 / numOfProcess << endl;
+	cout << "CPU Utilization: " << (totalBurstTime / (totalBurstTime + idle)) * 100 << "%" << endl;
+}
 
 int main()
 {
 
 	ifstream fin;
 	ofstream fout;
-
-	//// Saving text files into array
-	// string Test_Files[4];
-	// for (int i = 0; i < 4; i++)
-	//{
-	//	Test_Files[i] = "E:\\TT\\testfile_" + to_string(i + 1) + ".txt";
-	// }
 
 	// for (int i = 0; i < 4; i++)
 	// {
@@ -426,18 +538,23 @@ int main()
 				fin >> PCB[i].AT;
 				fin >> PCB[i].CPUB;
 				// Initially for debugging testing
-				cout << "Process " << i + 1 << ": PID=" << PCB[i].PID << ", AT=" << PCB[i].AT << ", CPUB=" << PCB[i].CPUB << endl;
+				// cout << "Process " << i + 1 << ": PID=" << PCB[i].PID << ", AT=" << PCB[i].AT << ", CPUB=" << PCB[i].CPUB << endl;
 			}
 		}
 
 		fin.close();
 
+	//    cout<<Q<<" "<<CS;
 		// Applying FCFS
 		// FCFS(PCB, i + 1);
 		FCFS(PCB,  1);
 
 
 		// Applying SFJ
+
 		SJF(PCB);
+
+		// Applying RoundRobin
+		RoundRobin(PCB, CS, Q);
 	// }
 }
